@@ -10,13 +10,13 @@ import org.springframework.context.annotation.Configuration;
 public class TasksApplicationConfig {
 
     @Bean
-    public CreateTaskUseCase createTaskEntryUseCase(TaskRepository repository) {
-        return new CreateTaskUseCase(repository);
+    public CreateTaskUseCase createTaskEntryUseCase(TaskRepository repository, UserRepository userRepository) {
+        return new CreateTaskUseCase(repository, userRepository);
     }
 
     @Bean
-    public UpdateTaskUseCase updateTaskEntryUseCase(TaskRepository repository) {
-        return new UpdateTaskUseCase(repository);
+    public UpdateTaskUseCase updateTaskEntryUseCase(TaskRepository repository, UserRepository userRepository) {
+        return new UpdateTaskUseCase(repository, userRepository);
     }
 
     @Bean
@@ -30,17 +30,22 @@ public class TasksApplicationConfig {
     }
 
     @Bean
+    public RejectTaskUseCase rejectTaskUseCase(TaskRepository taskRepository, UserRepository userRepository) {
+        return new RejectTaskUseCase(taskRepository, userRepository);
+    }
+
+    @Bean
     public ListApprovedTasksUseCase listApprovedTasksUseCase(TaskRepository repository) {
         return new ListApprovedTasksUseCase(repository);
     }
 
     @Bean
-    public ListUserTasksUseCase listUserTasksUseCase(TaskRepository repository) {
-        return new ListUserTasksUseCase(repository);
+    public ListUserTasksUseCase listUserTasksUseCase(TaskRepository repository, UserRepository userRepository) {
+        return new ListUserTasksUseCase(repository, userRepository);
     }
 
     @Bean
-    public SubmitTaskForApprovalUseCase submitTaskForApprovalUseCase(TaskRepository taskRepository) {
-        return new SubmitTaskForApprovalUseCase(taskRepository);
+    public SubmitTaskForApprovalUseCase submitTaskForApprovalUseCase(TaskRepository taskRepository, UserRepository userRepository) {
+        return new SubmitTaskForApprovalUseCase(taskRepository, userRepository);
     }
 }
