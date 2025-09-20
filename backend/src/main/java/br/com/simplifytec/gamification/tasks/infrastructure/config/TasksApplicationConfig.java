@@ -1,5 +1,6 @@
 package br.com.simplifytec.gamification.tasks.infrastructure.config;
 
+import br.com.simplifytec.gamification.shared.domain.service.Logger;
 import br.com.simplifytec.gamification.tasks.application.*;
 import br.com.simplifytec.gamification.tasks.domain.repository.TaskRepository;
 import br.com.simplifytec.gamification.users.domain.repository.UserRepository;
@@ -20,8 +21,8 @@ public class TasksApplicationConfig {
     }
 
     @Bean
-    public ListTasksUseCase listTasksEntryUseCase(TaskRepository repository) {
-        return new ListTasksUseCase(repository);
+    public ListTasksUseCase listTasksEntryUseCase(TaskRepository repository, UserRepository userRepository, Logger logger) {
+        return new ListTasksUseCase(repository, userRepository, logger);
     }
 
     @Bean
@@ -32,16 +33,6 @@ public class TasksApplicationConfig {
     @Bean
     public RejectTaskUseCase rejectTaskUseCase(TaskRepository taskRepository, UserRepository userRepository) {
         return new RejectTaskUseCase(taskRepository, userRepository);
-    }
-
-    @Bean
-    public ListApprovedTasksUseCase listApprovedTasksUseCase(TaskRepository repository) {
-        return new ListApprovedTasksUseCase(repository);
-    }
-
-    @Bean
-    public ListUserTasksUseCase listUserTasksUseCase(TaskRepository repository, UserRepository userRepository) {
-        return new ListUserTasksUseCase(repository, userRepository);
     }
 
     @Bean

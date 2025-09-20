@@ -1,21 +1,62 @@
 package br.com.simplifytec.gamification.tasks.application;
 
+import br.com.simplifytec.gamification.shared.domain.service.Logger;
 import br.com.simplifytec.gamification.tasks.domain.model.Task;
 import br.com.simplifytec.gamification.tasks.domain.model.TaskStatus;
 import br.com.simplifytec.gamification.tasks.domain.repository.TaskRepository;
+import br.com.simplifytec.gamification.users.domain.model.User;
+import br.com.simplifytec.gamification.users.domain.repository.UserRepository;
+import jakarta.annotation.Nullable;
 
-import java.util.List;
+import java.util.*;
 
 public class ListTasksUseCase {
-    private final TaskRepository repository;
+    private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
+    private final Logger logger;
 
-    public ListTasksUseCase(TaskRepository repo) {
-        this.repository = repo;
+    public ListTasksUseCase(TaskRepository taskRepository, UserRepository userRepository, Logger logger) {
+        this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
+        this.logger = logger;
     }
 
-    public Response execute() {
-        return new Response(repository.list());
+    public Response execute(Request request) {
+
+        Optional<User> user = userRepository.findById(request.userId());
+
+        List<Task> tasks = new ArrayList<>();
+
+        if (user.isEmpty()) {
+            return buildResponse(tasks);
+        }
+
+        if (user.get().isAdmin()) {
+            return buildResponse(taskRepository.list(request.status()));
+        }
+
+        return buildResponse(taskRepository.list(request.userId(), request.status()));
     }
 
-    public record Response(List<Task> tasks) {}
+    // TODO: find a better way to handle this
+    private Response buildResponse(List<Task> tasks) {
+        List<TaskResponse> tasksResponses = tasks.stream().map(task -> {
+            Optional<User> user = userRepository.findById(task.getUserId());
+
+            if (user.isEmpty()) {
+                logger.error("User not found " + task.getUserId());
+                return null;
+            }
+
+            return new TaskResponse(task, user.get().getEmail());
+        }).filter(Objects::nonNull).toList();
+
+        return new Response(tasksResponses);
+    }
+
+    public record Request(@Nullable UUID userId, @Nullable TaskStatus status) {}
+    public record Response(List<TaskResponse> tasks) {}
+
+    // TODO: find a better way to handle this
+    public record TaskResponse(Task task, String userEmail) {}
 }

@@ -3,6 +3,7 @@ package br.com.simplifytec.gamification.tasks.infrastructure.repository.inmemory
 import br.com.simplifytec.gamification.tasks.domain.model.Task;
 import br.com.simplifytec.gamification.tasks.domain.model.TaskStatus;
 import br.com.simplifytec.gamification.tasks.domain.repository.TaskRepository;
+import jakarta.annotation.Nonnull;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
@@ -36,14 +37,29 @@ public class InMemoryTaskRepository implements TaskRepository {
     }
 
     @Override
-    public List<Task> list(List<TaskStatus> statuses) {
-        var tasks = store.values().stream();
+    public List<Task> list(UUID userId, TaskStatus status) {
+        if (userId == null) return list(status);
+        if (status == null) return list(userId);
 
-        if (statuses != null && !statuses.isEmpty()) {
-            tasks = tasks.filter(task -> statuses.contains(task.getStatus()));
-        }
+        var tasks = store.values().stream().filter(
+                task -> userId.equals(task.getUserId())
+                        && status.equals(task.getStatus()));
 
         return tasks.toList();
+    }
+
+    @Override
+    public List<Task> list(@Nonnull UUID userId) {
+        return store.values().stream().filter(
+                task -> userId.equals(task.getUserId())
+        ).toList();
+    }
+
+    @Override
+    public List<Task> list(@Nonnull TaskStatus status) {
+        return store.values().stream().filter(
+                task -> status.equals(task.getStatus())
+        ).toList();
     }
 
     @Override
