@@ -7,6 +7,8 @@ public class User {
     private UUID id;
     private String email;
 
+    private String password;
+
     private boolean isAdmin;
 
     private Date createDate;
@@ -23,6 +25,10 @@ public class User {
 
     public boolean isAdmin() {
         return isAdmin;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public Date getCreateDate() {
