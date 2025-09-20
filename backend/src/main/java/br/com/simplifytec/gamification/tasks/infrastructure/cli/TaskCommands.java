@@ -9,9 +9,9 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
-import java.util.List;
 import java.util.UUID;
 
+// TODO: fix
 @ShellComponent
 public class TaskCommands {
 
@@ -42,35 +42,35 @@ public class TaskCommands {
         return taskResponse.task();
     }
 
-    @ShellMethod(key = "update-task")
-    public Task update(
-            @ShellOption(defaultValue = "") UUID taskId,
-            @ShellOption(defaultValue = "New Test Title") String title,
-            @ShellOption(defaultValue = "New Test Content") String content) {
+//    @ShellMethod(key = "update-task")
+//    public Task update(
+//            @ShellOption(defaultValue = "") UUID taskId,
+//            @ShellOption(defaultValue = "New Test Title") String title,
+//            @ShellOption(defaultValue = "New Test Content") String content) {
+//
+//        if (taskId == null) taskId = getFirstTask().getId();
+//
+//        UpdateTaskUseCase.Response taskResponse = updateTaskUseCase.execute(
+//                new UpdateTaskUseCase.Request(getUserId(), taskId, title, content));
+//
+//        return taskResponse.task();
+//    }
 
-        if (taskId == null) taskId = getFirstTask().getId();
+//    @ShellMethod(key = "submit-task")
+//    public void submitTask(@ShellOption(defaultValue = "") UUID taskId) {
+//        if (taskId == null) taskId = getFirstTask().getId();
+//
+//        submitTaskForApprovalUseCase.execute(new SubmitTaskForApprovalUseCase.Request(getUserId(), taskId));
+//    }
 
-        UpdateTaskUseCase.Response taskResponse = updateTaskUseCase.execute(
-                new UpdateTaskUseCase.Request(getUserId(), taskId, title, content));
+//    @ShellMethod(key = "list-tasks")
+//    public List<Task> listTasks() {
+//        return listTasksUseCase.execute().tasks();
+//    }
 
-        return taskResponse.task();
-    }
-
-    @ShellMethod(key = "submit-task")
-    public void submitTask(@ShellOption(defaultValue = "") UUID taskId) {
-        if (taskId == null) taskId = getFirstTask().getId();
-
-        submitTaskForApprovalUseCase.execute(new SubmitTaskForApprovalUseCase.Request(getUserId(), taskId));
-    }
-
-    @ShellMethod(key = "list-tasks")
-    public List<Task> listTasks() {
-        return listTasksUseCase.execute().tasks();
-    }
-
-    private Task getFirstTask() {
-        return listTasksUseCase.execute().tasks().getFirst();
-    }
+//    private Task getFirstTask() {
+//        return listTasksUseCase.execute().tasks().getFirst();
+//    }
 
     private UUID getUserId() {
         // TODO implement
