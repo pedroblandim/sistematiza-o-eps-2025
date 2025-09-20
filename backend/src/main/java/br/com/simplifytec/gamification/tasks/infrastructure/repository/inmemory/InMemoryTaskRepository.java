@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 @Repository
-@Profile("inmemory") // ativa com SPRING_PROFILES_ACTIVE=inmemory
+@Profile("test")
 public class InMemoryTaskRepository implements TaskRepository {
 
     @Override

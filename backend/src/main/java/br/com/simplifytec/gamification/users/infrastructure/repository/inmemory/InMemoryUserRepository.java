@@ -11,14 +11,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 @Repository
-@Profile("inmemory")
+@Profile("test")
 public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findById(UUID userId) {
         return Optional.ofNullable(store.get(userId));
-    }    @Override
+    }
 
+    @Override
     public Optional<User> findByEmail(String email) {
         return store.values().stream()
                 .filter(user -> email.equals(user.getEmail()))
@@ -26,8 +27,12 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public Task save(User task) {
-        return null;
+    public User save(User user) {
+        if (user.getId() == null) {
+            throw new IllegalArgumentException("User must have an ID");
+        }
+        store.put(user.getId(), user);
+        return user;
     }
 
     private final ConcurrentMap<UUID, User> store = new ConcurrentHashMap<>();

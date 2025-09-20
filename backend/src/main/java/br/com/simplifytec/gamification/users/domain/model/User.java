@@ -14,6 +14,17 @@ public class User {
     private Date createDate;
     private Date modifiedDate;
 
+    public User() {}
+
+    public User(UUID id, String email, String password, boolean isAdmin, Date createDate, Date modifiedDate) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.isAdmin = isAdmin;
+        this.createDate = createDate;
+        this.modifiedDate = modifiedDate;
+    }
+
 
     public UUID getId() {
         return id;
