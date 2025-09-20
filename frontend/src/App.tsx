@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { TaskForm } from './components/TaskForm'
 import { TaskList } from './components/TaskList'
 import { LoginForm } from './components/LoginForm'
+import { AdminDashboard } from './components/AdminDashboard'
 import { AuthProvider } from './contexts/AuthContext'
 import { useAuth } from './hooks/useAuth'
 import { apiService } from './services/api'
@@ -13,10 +14,10 @@ function AppContent() {
   const [editingTask, setEditingTask] = useState<Task | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { isAuthenticated, logout, isLoading: authLoading } = useAuth()
+  const { isAuthenticated, user, logout, isLoading: authLoading } = useAuth()
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && user && !user.isAdmin) {
       const loadTasks = async () => {
         setIsLoading(true)
         setError(null)
@@ -33,7 +34,7 @@ function AppContent() {
 
       loadTasks()
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated, user])
 
   const handleCreateTask = async (taskData: CreateTaskRequest) => {
     setIsLoading(true)
@@ -116,13 +117,38 @@ function AppContent() {
     )
   }
 
+  // Renderizar dashboard administrativo para admins
+  if (user?.isAdmin) {
+    return (
+      <div className="app">
+        <header className="app-header">
+          <h1>Sistema de Gamificação - Administração</h1>
+          <div className="header-right">
+            <span className="user-info">Admin: {user.email}</span>
+            <button onClick={logout} className="logout-btn">
+              Sair
+            </button>
+          </div>
+        </header>
+
+        <main className="app-main admin-layout">
+          <AdminDashboard />
+        </main>
+      </div>
+    )
+  }
+
+  // Renderizar interface normal para usuários comuns
   return (
     <div className="app">
       <header className="app-header">
         <h1>Sistema de Gamificação - Tarefas</h1>
-        <button onClick={logout} className="logout-btn">
-          Sair
-        </button>
+        <div className="header-right">
+          <span className="user-info">{user?.email}</span>
+          <button onClick={logout} className="logout-btn">
+            Sair
+          </button>
+        </div>
       </header>
 
       <main className="app-main">

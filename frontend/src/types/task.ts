@@ -2,8 +2,11 @@ export interface Task {
   taskId: string;
   title: string;
   content: string;
+  status: TaskStatus;
   createDate: string;
   modifiedDate: string;
+  userId: string;
+  userEmail?: string;
 }
 
 export interface CreateTaskRequest {
@@ -27,3 +30,9 @@ export const TaskStatus = {
 } as const;
 
 export type TaskStatus = typeof TaskStatus[keyof typeof TaskStatus];
+
+export interface ApprovalRequest {
+  taskId: string;
+  approved: boolean;
+  comments?: string;
+}

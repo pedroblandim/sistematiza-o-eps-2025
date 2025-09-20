@@ -5,9 +5,11 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   token: string | null;
+  user?: User;
 }
 
 export interface User {
   id: string;
   email: string;
+  isAdmin: boolean;
 }

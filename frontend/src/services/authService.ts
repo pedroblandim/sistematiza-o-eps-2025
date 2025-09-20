@@ -1,11 +1,13 @@
-import type { LoginRequest, LoginResponse } from '../types/auth';
+import type { LoginRequest, LoginResponse, User } from '../types/auth';
+import { jwtDecode } from 'jwt-decode';
 
 const API_BASE_URL = 'http://localhost:8080';
 
 class AuthService {
   private tokenKey = 'auth_token';
+  private userKey = 'auth_user';
 
-  async login(credentials: LoginRequest): Promise<string> {
+  async login(credentials: LoginRequest): Promise<LoginResponse> {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: {
@@ -25,11 +27,35 @@ class AuthService {
     }
 
     this.setToken(data.token);
-    return data.token;
+
+    const userData = this.extractUserFromToken(data.token);
+    this.setUser(userData);
+
+    return { ...data, user: userData };
+  }
+
+  private extractUserFromToken(token: string): User {
+    return this.extractUserFromTokenPublic(token);
+  }
+
+  extractUserFromTokenPublic(token: string): User {
+    try {
+      const payload = jwtDecode<{ sub: string, email: string, isAdmin: boolean }>(token);
+
+      return {
+        id: payload.sub,
+        email: payload.email,
+        isAdmin: payload.isAdmin || false,
+      };
+    } catch (error) {
+      console.error('Erro ao decodificar token JWT:', error);
+      throw new Error('Token JWT inválido');
+    }
   }
 
   logout(): void {
     localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.userKey);
   }
 
   setToken(token: string): void {
@@ -38,6 +64,15 @@ class AuthService {
 
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
+  }
+
+  setUser(user: User): void {
+    localStorage.setItem(this.userKey, JSON.stringify(user));
+  }
+
+  getUser(): User | null {
+    const userData = localStorage.getItem(this.userKey);
+    return userData ? JSON.parse(userData) : null;
   }
 
   isAuthenticated(): boolean {

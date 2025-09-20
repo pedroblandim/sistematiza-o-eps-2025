@@ -1,4 +1,4 @@
-import type { Task, CreateTaskRequest, UpdateTaskRequest } from '../types/task';
+import type { Task, CreateTaskRequest, UpdateTaskRequest, ApprovalRequest } from '../types/task';
 import { authService } from './authService';
 
 const API_BASE_URL = 'http://localhost:8080';
@@ -52,6 +52,19 @@ class ApiService {
 
   async getTasks(): Promise<Task[]> {
     return this.request<Task[]>('/tasks');
+  }
+
+  // Admin methods
+  async getTasksForApproval(): Promise<Task[]> {
+    return this.request<Task[]>('/admin/tasks/pending-approval');
+  }
+
+  async processTaskApproval(request: ApprovalRequest): Promise<Task> {
+    const endpoint = request.approved ? '/admin/tasks/approve' : '/admin/tasks/reject';
+    return this.request<Task>(endpoint, {
+      method: 'POST',
+      body: JSON.stringify(request),
+    });
   }
 }
 
