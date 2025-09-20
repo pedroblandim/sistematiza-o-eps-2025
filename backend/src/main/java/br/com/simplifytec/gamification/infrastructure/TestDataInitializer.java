@@ -1,4 +1,4 @@
-package br.com.simplifytec.gamification.config;
+package br.com.simplifytec.gamification.infrastructure;
 
 import br.com.simplifytec.gamification.users.domain.model.User;
 import br.com.simplifytec.gamification.users.domain.repository.UserRepository;
