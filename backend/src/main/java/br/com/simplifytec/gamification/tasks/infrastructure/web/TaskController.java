@@ -3,9 +3,10 @@ package br.com.simplifytec.gamification.tasks.infrastructure.web;
 import br.com.simplifytec.gamification.auth.domain.exception.UnauthorizedException;
 import br.com.simplifytec.gamification.auth.service.JWTService;
 import br.com.simplifytec.gamification.tasks.application.CreateTaskUseCase;
-import br.com.simplifytec.gamification.tasks.application.ListUserTasksUseCase;
+import br.com.simplifytec.gamification.tasks.application.ListTasksUseCase;
 import br.com.simplifytec.gamification.tasks.application.UpdateTaskUseCase;
 import br.com.simplifytec.gamification.tasks.domain.model.Task;
+import br.com.simplifytec.gamification.tasks.domain.model.TaskStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,15 +20,15 @@ import java.util.UUID;
 public class TaskController {
     private final CreateTaskUseCase createTaskUseCase;
     private final UpdateTaskUseCase updateTaskUseCase;
-    private final ListUserTasksUseCase listUserTasksUseCase;
+    private final ListTasksUseCase listTasksUseCase;
     private final JWTService jwtService;
 
     public TaskController(
             CreateTaskUseCase createTaskUseCase, UpdateTaskUseCase updateTaskUseCase,
-            ListUserTasksUseCase listUserTasksUseCase, JWTService jwtService) {
+            ListTasksUseCase listTasksUseCase, JWTService jwtService) {
         this.createTaskUseCase = createTaskUseCase;
         this.updateTaskUseCase = updateTaskUseCase;
-        this.listUserTasksUseCase = listUserTasksUseCase;
+        this.listTasksUseCase = listTasksUseCase;
         this.jwtService = jwtService;
     }
 
@@ -35,14 +36,12 @@ public class TaskController {
     public ResponseEntity<List<TaskResponse>> list(@RequestHeader("Authorization") String authHeader) {
         UUID userId = getUserIdFromHeader(authHeader);
 
-        ListUserTasksUseCase.Response response = listUserTasksUseCase.execute(
-                new ListUserTasksUseCase.Request(userId)
+        ListTasksUseCase.Response response = listTasksUseCase.execute(
+                new ListTasksUseCase.Request(userId, null)
         );
 
         List<TaskResponse> taskResponses = response.tasks().stream()
-                .map(task -> new TaskResponse(
-                        task.getId(), task.getTitle(), task.getContent(),
-                        task.getCreateDate(), task.getModifiedDate()))
+                .map(taskResponse -> createTaskResponse(taskResponse.task()))
                 .toList();
 
         return ResponseEntity.ok(taskResponses);
@@ -58,8 +57,7 @@ public class TaskController {
 
         Task task = taskResponse.task();
 
-        TaskResponse response = new TaskResponse(
-                task.getId(), task.getTitle(), task.getContent(), task.getCreateDate(), task.getModifiedDate());
+        TaskResponse response = createTaskResponse(task);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -74,8 +72,7 @@ public class TaskController {
 
         Task task = taskResponse.task();
 
-        TaskResponse response = new TaskResponse(
-                task.getId(), task.getTitle(), task.getContent(), task.getCreateDate(), task.getModifiedDate());
+        TaskResponse response = createTaskResponse(task);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -94,7 +91,21 @@ public class TaskController {
         return jwtService.extractUserId(jwt);
     }
 
-    public record TaskResponse(UUID taskId, String title, String content, Date createDate, Date modifiedDate) {}
+    private TaskResponse createTaskResponse(Task task) {
+        return new TaskResponse(
+                task.getId(),
+                task.getTitle(),
+                task.getContent(),
+                task.getStatus(),
+                task.getUserId(),
+                task.getCreateDate(),
+                task.getModifiedDate()
+        );
+    }
+
+    public record TaskResponse(
+            UUID taskId, String title, String content, TaskStatus status, UUID userId, Date createDate,
+            Date modifiedDate) {}
 
     public record CreateTaskRequest(String title, String content, UUID taskTypeId) {}
     public record UpdateTaskRequest(UUID taskId, String title, String content) {}
