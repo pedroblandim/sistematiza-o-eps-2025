@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class ApplicationConfig {
+public class TasksApplicationConfig {
 
     @Bean
     public CreateTaskUseCase createTaskEntryUseCase(TaskRepository repository) {
