@@ -1,5 +1,7 @@
 package br.com.simplifytec.gamification.tasks.infrastructure.web;
 
+import br.com.simplifytec.gamification.auth.domain.exception.UnauthorizedException;
+import br.com.simplifytec.gamification.auth.service.JWTService;
 import br.com.simplifytec.gamification.tasks.application.CreateTaskUseCase;
 import br.com.simplifytec.gamification.tasks.application.ListUserTasksUseCase;
 import br.com.simplifytec.gamification.tasks.application.UpdateTaskUseCase;
@@ -18,17 +20,23 @@ public class TaskController {
     private final CreateTaskUseCase createTaskUseCase;
     private final UpdateTaskUseCase updateTaskUseCase;
     private final ListUserTasksUseCase listUserTasksUseCase;
+    private final JWTService jwtService;
 
-    public TaskController(CreateTaskUseCase createTaskUseCase, UpdateTaskUseCase updateTaskUseCase, ListUserTasksUseCase listUserTasksUseCase) {
+    public TaskController(
+            CreateTaskUseCase createTaskUseCase, UpdateTaskUseCase updateTaskUseCase,
+            ListUserTasksUseCase listUserTasksUseCase, JWTService jwtService) {
         this.createTaskUseCase = createTaskUseCase;
         this.updateTaskUseCase = updateTaskUseCase;
         this.listUserTasksUseCase = listUserTasksUseCase;
+        this.jwtService = jwtService;
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskResponse>> list() {
+    public ResponseEntity<List<TaskResponse>> list(@RequestHeader("Authorization") String authHeader) {
+        UUID userId = getUserIdFromHeader(authHeader);
+
         ListUserTasksUseCase.Response response = listUserTasksUseCase.execute(
-                new ListUserTasksUseCase.Request(getUserId())
+                new ListUserTasksUseCase.Request(userId)
         );
 
         List<TaskResponse> taskResponses = response.tasks().stream()
@@ -41,9 +49,11 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskResponse> create(@RequestBody CreateTaskRequest request) {
+    public ResponseEntity<TaskResponse> create(@RequestHeader("Authorization") String authHeader, @RequestBody CreateTaskRequest request) {
+        UUID userId = getUserIdFromHeader(authHeader);
+
         CreateTaskUseCase.Response taskResponse = createTaskUseCase.execute(
-                new CreateTaskUseCase.Request(getUserId(), request.title(), request.content(), request.taskTypeId())
+                new CreateTaskUseCase.Request(userId, request.title(), request.content(), request.taskTypeId())
         );
 
         Task task = taskResponse.task();
@@ -55,9 +65,11 @@ public class TaskController {
     }
 
     @PutMapping
-    public ResponseEntity<TaskResponse> update(@RequestBody UpdateTaskRequest request) {
+    public ResponseEntity<TaskResponse> update(@RequestHeader("Authorization") String authHeader, @RequestBody UpdateTaskRequest request) {
+        UUID userId = getUserIdFromHeader(authHeader);
+
         UpdateTaskUseCase.Response taskResponse = updateTaskUseCase.execute(
-                new UpdateTaskUseCase.Request(getUserId(), request.taskId(), request.title(), request.content())
+                new UpdateTaskUseCase.Request(userId, request.taskId(), request.title(), request.content())
         );
 
         Task task = taskResponse.task();
@@ -68,9 +80,18 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    private UUID getUserId() {
-        // TODO implement
-        return UUID.fromString("89f78d45-9c57-4f29-b3f5-22e6d41fb641");
+    private UUID getUserIdFromHeader(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new UnauthorizedException("Invalid authorization header");
+        }
+
+        String jwt = authHeader.substring(7);
+
+        if (!jwtService.verify(jwt)) {
+            throw new UnauthorizedException("Invalid JWT token");
+        }
+
+        return jwtService.extractUserId(jwt);
     }
 
     public record TaskResponse(UUID taskId, String title, String content, Date createDate, Date modifiedDate) {}

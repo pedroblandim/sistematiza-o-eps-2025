@@ -14,6 +14,7 @@ public class UpdateTaskUseCase {
     }
 
     public Response execute(Request request) {
+        // here the authorization is managed by the query using userId as a filter
         Task task = repository.findByUserIdAndTaskId(request.userId(), request.taskId())
                 .orElseThrow(() -> new TaskNotFoundException(request.taskId().toString()));
 

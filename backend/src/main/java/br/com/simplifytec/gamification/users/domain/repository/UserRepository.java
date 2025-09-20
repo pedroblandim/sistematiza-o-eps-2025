@@ -9,4 +9,5 @@ import java.util.UUID;
 public interface UserRepository {
     Task save(User task);
     Optional<User> findById(UUID userId);
+    Optional<User> findByEmail(String email);
 }
