@@ -5,6 +5,8 @@ import br.com.simplifytec.gamification.auth.service.JWTService;
 import br.com.simplifytec.gamification.users.domain.model.User;
 import br.com.simplifytec.gamification.users.domain.repository.UserRepository;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
@@ -24,14 +26,20 @@ public class LoginUseCase {
     public String execute(Request request) throws UnauthorizedException {
         String hashedPassword = hashFunction.apply(request.password);
 
-        Optional<User> user = userRepository.findByEmail(request.email());
+        Optional<User> userOpt = userRepository.findByEmail(request.email());
 
-        if (user.isEmpty()) throw new UnauthorizedException("Invalid credentials for email " + request.email());
+        if (userOpt.isEmpty()) throw new UnauthorizedException("Invalid credentials for email " + request.email());
 
-        if (!hashedPassword.equals(user.get().getPassword()))
+        User user = userOpt.get();
+
+        if (!hashedPassword.equals(user.getPassword()))
             throw new UnauthorizedException("Invalid credentials for email " + request.email());
 
-        return jwtService.encode(user.get().getId());
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("email", user.getEmail());
+        payload.put("isAdmin", user.isAdmin());
+
+        return jwtService.encode(user.getId(), payload);
     }
 
     public record Request(String email, String password) {}
