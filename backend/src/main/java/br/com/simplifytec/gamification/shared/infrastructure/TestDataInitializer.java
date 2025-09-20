@@ -1,4 +1,4 @@
-package br.com.simplifytec.gamification.infrastructure;
+package br.com.simplifytec.gamification.shared.infrastructure;
 
 import br.com.simplifytec.gamification.shared.domain.service.Logger;
 import br.com.simplifytec.gamification.users.domain.model.User;

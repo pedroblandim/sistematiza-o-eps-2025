@@ -6,7 +6,6 @@ import br.com.simplifytec.gamification.tasks.domain.model.TaskStatus;
 import br.com.simplifytec.gamification.tasks.domain.repository.TaskRepository;
 import br.com.simplifytec.gamification.users.domain.model.User;
 import br.com.simplifytec.gamification.users.domain.repository.UserRepository;
-import jakarta.annotation.Nullable;
 
 import java.util.*;
 
@@ -54,7 +53,7 @@ public class ListTasksUseCase {
         return new Response(tasksResponses);
     }
 
-    public record Request(@Nullable UUID userId, @Nullable List<TaskStatus> statuses) {}
+    public record Request(UUID userId, List<TaskStatus> statuses) {}
     public record Response(List<TaskResponse> tasks) {}
 
     // TODO: find a better way to handle this

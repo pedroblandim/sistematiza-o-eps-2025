@@ -1,4 +1,4 @@
-package br.com.simplifytec.gamification.auth.infrastructure.config.service;
+package br.com.simplifytec.gamification.auth.infrastructure.service;
 
 import br.com.simplifytec.gamification.auth.domain.exception.UnauthorizedException;
 import br.com.simplifytec.gamification.auth.service.JWTService;

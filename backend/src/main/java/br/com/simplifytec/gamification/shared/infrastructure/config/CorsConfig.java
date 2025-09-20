@@ -1,4 +1,4 @@
-package br.com.simplifytec.gamification.infrastructure.config;
+package br.com.simplifytec.gamification.shared.infrastructure.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
