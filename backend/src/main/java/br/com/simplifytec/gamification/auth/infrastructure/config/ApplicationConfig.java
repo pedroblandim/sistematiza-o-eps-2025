@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.function.UnaryOperator;
 
 @Configuration
-public class UseCaseConfig {
+public class ApplicationConfig {
 
     @Bean
     public LoginUseCase loginUseCase(UserRepository userRepository, UnaryOperator<String> hashFunction, JWTService jwtService) {
