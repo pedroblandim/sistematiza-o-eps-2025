@@ -33,7 +33,7 @@ public class InMemoryTaskRepository implements TaskRepository {
 
     @Override
     public Optional<Task> findById(UUID taskId) {
-        return Optional.empty();
+        return store.values().stream().filter(task -> taskId.equals(task.getId())).findFirst();
     }
 
     @Override
@@ -49,6 +49,18 @@ public class InMemoryTaskRepository implements TaskRepository {
     }
 
     @Override
+    public List<Task> list(UUID userId, List<TaskStatus> statuses) {
+        if (userId == null) return list(statuses);
+        if (statuses == null || statuses.isEmpty()) return list(userId);
+
+        var tasks = store.values().stream().filter(
+                task -> userId.equals(task.getUserId())
+                        && statuses.contains(task.getStatus()));
+
+        return tasks.toList();
+    }
+
+    @Override
     public List<Task> list(@Nonnull UUID userId) {
         return store.values().stream().filter(
                 task -> userId.equals(task.getUserId())
@@ -57,8 +69,13 @@ public class InMemoryTaskRepository implements TaskRepository {
 
     @Override
     public List<Task> list(@Nonnull TaskStatus status) {
+        return list(List.of(status));
+    }
+
+    @Override
+    public List<Task> list(@Nonnull List<TaskStatus> statuses) {
         return store.values().stream().filter(
-                task -> status.equals(task.getStatus())
+                task -> statuses.contains(task.getStatus())
         ).toList();
     }
 

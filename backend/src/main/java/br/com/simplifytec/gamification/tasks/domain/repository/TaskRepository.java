@@ -14,7 +14,9 @@ public interface TaskRepository {
     Optional<Task> findByUserIdAndTaskId(UUID userId, UUID taskId);
     List<Task> list();
     List<Task> list(TaskStatus status);
+    List<Task> list(List<TaskStatus> statuses);
     List<Task> list(UUID userId);
     List<Task> list(UUID userId, TaskStatus status);
+    List<Task> list(UUID userId, List<TaskStatus> statuses);
     List<Task> listByUserId(UUID userId);
 }

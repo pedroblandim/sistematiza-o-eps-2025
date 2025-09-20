@@ -40,11 +40,26 @@ public class AdminTaskController {
         UUID userId = getUserIdFromHeader(authHeader);
 
         ListTasksUseCase.Response response = listTasksUseCase.execute(
-                new ListTasksUseCase.Request(userId, TaskStatus.SUBMITTED_FOR_APPROVAL)
+                new ListTasksUseCase.Request(userId, List.of(TaskStatus.SUBMITTED_FOR_APPROVAL))
         );
 
         List<TaskResponse> taskResponses = response.tasks().stream()
-                .map(taskResponse -> createTaskResponse(taskResponse.task()))
+                .map(taskResponse -> createTaskResponse(taskResponse.task(), taskResponse.userEmail()))
+                .toList();
+
+        return ResponseEntity.ok(taskResponses);
+    }
+
+    @GetMapping("/tasks/processed")
+    public ResponseEntity<List<TaskResponse>> listProcessedTasks(@RequestHeader("Authorization") String authHeader) {
+        UUID userId = getUserIdFromHeader(authHeader);
+
+        ListTasksUseCase.Response response = listTasksUseCase.execute(
+                new ListTasksUseCase.Request(userId, List.of(TaskStatus.APPROVED, TaskStatus.REJECTED))
+        );
+
+        List<TaskResponse> taskResponses = response.tasks().stream()
+                .map(taskResponse -> createTaskResponse(taskResponse.task(), taskResponse.userEmail()))
                 .toList();
 
         return ResponseEntity.ok(taskResponses);
@@ -56,7 +71,7 @@ public class AdminTaskController {
 
         approveTaskUseCase.execute(new ApproveTaskUseCase.Request(userId, request.taskId()));
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/tasks/reject")
@@ -65,7 +80,7 @@ public class AdminTaskController {
 
         rejectTaskUseCase.execute(new RejectTaskUseCase.Request(userId, request.taskId()));
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     private UUID getUserIdFromHeader(String authHeader) {
@@ -80,10 +95,6 @@ public class AdminTaskController {
         }
 
         return jwtService.extractUserId(jwt);
-    }
-
-    private TaskResponse createTaskResponse(Task task) {
-        return createTaskResponse(task, null);
     }
 
     private TaskResponse createTaskResponse(Task task, String userEmail) {

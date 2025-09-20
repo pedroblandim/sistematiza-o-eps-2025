@@ -4,6 +4,7 @@ import br.com.simplifytec.gamification.auth.domain.exception.UnauthorizedExcepti
 import br.com.simplifytec.gamification.auth.service.JWTService;
 import br.com.simplifytec.gamification.tasks.application.CreateTaskUseCase;
 import br.com.simplifytec.gamification.tasks.application.ListTasksUseCase;
+import br.com.simplifytec.gamification.tasks.application.SubmitTaskForApprovalUseCase;
 import br.com.simplifytec.gamification.tasks.application.UpdateTaskUseCase;
 import br.com.simplifytec.gamification.tasks.domain.model.Task;
 import br.com.simplifytec.gamification.tasks.domain.model.TaskStatus;
@@ -21,14 +22,17 @@ public class TaskController {
     private final CreateTaskUseCase createTaskUseCase;
     private final UpdateTaskUseCase updateTaskUseCase;
     private final ListTasksUseCase listTasksUseCase;
+    private final SubmitTaskForApprovalUseCase submitTaskForApprovalUseCase;
     private final JWTService jwtService;
 
     public TaskController(
             CreateTaskUseCase createTaskUseCase, UpdateTaskUseCase updateTaskUseCase,
-            ListTasksUseCase listTasksUseCase, JWTService jwtService) {
+            ListTasksUseCase listTasksUseCase, SubmitTaskForApprovalUseCase submitTaskForApprovalUseCase,
+            JWTService jwtService) {
         this.createTaskUseCase = createTaskUseCase;
         this.updateTaskUseCase = updateTaskUseCase;
         this.listTasksUseCase = listTasksUseCase;
+        this.submitTaskForApprovalUseCase = submitTaskForApprovalUseCase;
         this.jwtService = jwtService;
     }
 
@@ -77,6 +81,17 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PostMapping("/submit")
+    public ResponseEntity<Void> submitForApproval(@RequestHeader("Authorization") String authHeader, @RequestBody SubmitTaskRequest request) {
+        UUID userId = getUserIdFromHeader(authHeader);
+
+        submitTaskForApprovalUseCase.execute(
+                new SubmitTaskForApprovalUseCase.Request(userId, request.taskId())
+        );
+
+        return ResponseEntity.noContent().build();
+    }
+
     private UUID getUserIdFromHeader(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new UnauthorizedException("Invalid authorization header");
@@ -109,5 +124,6 @@ public class TaskController {
 
     public record CreateTaskRequest(String title, String content, UUID taskTypeId) {}
     public record UpdateTaskRequest(UUID taskId, String title, String content) {}
+    public record SubmitTaskRequest(UUID taskId) {}
 
 }

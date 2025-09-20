@@ -32,10 +32,10 @@ public class ListTasksUseCase {
         }
 
         if (user.get().isAdmin()) {
-            return buildResponse(taskRepository.list(request.status()));
+            return buildResponse(taskRepository.list(request.statuses()));
         }
 
-        return buildResponse(taskRepository.list(request.userId(), request.status()));
+        return buildResponse(taskRepository.list(request.userId(), request.statuses()));
     }
 
     // TODO: find a better way to handle this
@@ -54,7 +54,7 @@ public class ListTasksUseCase {
         return new Response(tasksResponses);
     }
 
-    public record Request(@Nullable UUID userId, @Nullable TaskStatus status) {}
+    public record Request(@Nullable UUID userId, @Nullable List<TaskStatus> statuses) {}
     public record Response(List<TaskResponse> tasks) {}
 
     // TODO: find a better way to handle this
