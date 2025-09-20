@@ -1,7 +1,7 @@
 import type { LoginRequest, LoginResponse, User } from '../types/auth';
 import { jwtDecode } from 'jwt-decode';
 
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 class AuthService {
   private tokenKey = 'auth_token';
@@ -40,10 +40,15 @@ class AuthService {
 
   extractUserFromTokenPublic(token: string): User {
     try {
-      const payload = jwtDecode<{ sub: string, email: string, isAdmin: boolean }>(token);
+      const payload = jwtDecode<{
+        sub?: string;
+        userId?: string;
+        email: string;
+        isAdmin: boolean
+      }>(token);
 
       return {
-        id: payload.sub,
+        id: payload.userId || payload.sub || 'unknown',
         email: payload.email,
         isAdmin: payload.isAdmin || false,
       };
