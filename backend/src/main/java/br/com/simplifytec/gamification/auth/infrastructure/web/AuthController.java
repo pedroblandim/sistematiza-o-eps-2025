@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
-public class LoginController {
+public class AuthController {
 
     private final LoginUseCase loginUseCase;
 
-    public LoginController(LoginUseCase loginUseCase) {
+    public AuthController(LoginUseCase loginUseCase) {
         this.loginUseCase = loginUseCase;
     }
 
