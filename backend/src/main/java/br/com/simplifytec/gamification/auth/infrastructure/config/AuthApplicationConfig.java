@@ -1,7 +1,6 @@
 package br.com.simplifytec.gamification.auth.infrastructure.config;
 
 import br.com.simplifytec.gamification.auth.application.LoginUseCase;
-import br.com.simplifytec.gamification.auth.infrastructure.config.service.FakeJWTService;
 import br.com.simplifytec.gamification.auth.service.JWTService;
 import br.com.simplifytec.gamification.users.domain.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
@@ -17,10 +16,6 @@ public class AuthApplicationConfig {
         return new LoginUseCase(userRepository, hashFunction, jwtService);
     }
 
-    @Bean
-    public JWTService jwtService() {
-        return new FakeJWTService();
-    }
 
     // for testing
     @Bean
