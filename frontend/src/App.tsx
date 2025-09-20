@@ -6,7 +6,7 @@ import { AdminDashboard } from './components/AdminDashboard'
 import { AuthProvider } from './contexts/AuthContext'
 import { useAuth } from './hooks/useAuth'
 import { apiService } from './services/api'
-import type { Task, CreateTaskRequest, UpdateTaskRequest } from './types/task'
+import type { Task, CreateTaskRequest, UpdateTaskRequest, SubmitTaskRequest } from './types/task'
 import './App.css'
 
 function AppContent() {
@@ -56,17 +56,11 @@ function AppContent() {
 
     try {
       const updatedTask = await apiService.updateTask(taskData)
-      console.log('Task updated:', updatedTask)
-      console.log('Updating task with ID:', updatedTask.taskId)
-
-      setTasks(prev => {
-        const newTasks = prev.map(task => {
-          console.log('Comparing:', task.taskId, 'with', updatedTask.taskId, task.taskId === updatedTask.taskId)
-          return task.taskId === updatedTask.taskId ? updatedTask : task
-        })
-        console.log('New tasks array:', newTasks)
-        return newTasks
-      })
+      setTasks(prev =>
+        prev.map(task =>
+          task.taskId === updatedTask.taskId ? updatedTask : task
+        )
+      )
     } catch (err) {
       setError('Erro ao atualizar tarefa: ' + (err as Error).message)
     } finally {
@@ -74,7 +68,7 @@ function AppContent() {
     }
   }
 
-  const handleSubmitTask = async (taskData: CreateTaskRequest | UpdateTaskRequest) => {
+  const handleSubmitTaskForm = async (taskData: CreateTaskRequest | UpdateTaskRequest) => {
     if ('taskId' in taskData) {
       await handleUpdateTask(taskData)
     } else {
@@ -94,6 +88,22 @@ function AppContent() {
 
   const handleCancelEdit = () => {
     setEditingTask(null)
+  }
+
+  const handleSubmitTaskForApproval = async (request: SubmitTaskRequest) => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      await apiService.submitTask(request)
+      const taskList = await apiService.getTasks()
+      setTasks(taskList)
+    } catch (err) {
+      console.error('Erro ao submeter tarefa:', err)
+      setError('Erro ao submeter tarefa: ' + (err as Error).message)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   if (authLoading) {
@@ -168,7 +178,7 @@ function AppContent() {
           )}
 
           <TaskForm
-            onSubmit={handleSubmitTask}
+            onSubmit={handleSubmitTaskForm}
             initialData={editingTask ? {
               taskId: editingTask.taskId,
               title: editingTask.title,
@@ -183,6 +193,7 @@ function AppContent() {
           <TaskList
             tasks={tasks}
             onEditTask={handleEditTask}
+            onSubmitTask={handleSubmitTaskForApproval}
           />
         </section>
 

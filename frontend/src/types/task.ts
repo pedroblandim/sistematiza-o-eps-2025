@@ -6,7 +6,7 @@ export interface Task {
   createDate: string;
   modifiedDate: string;
   userId: string;
-  userEmail?: string;
+  userEmail: string;
 }
 
 export interface CreateTaskRequest {
@@ -34,5 +34,8 @@ export type TaskStatus = typeof TaskStatus[keyof typeof TaskStatus];
 export interface ApprovalRequest {
   taskId: string;
   approved: boolean;
-  comments?: string;
+}
+
+export interface SubmitTaskRequest {
+  taskId: string;
 }

@@ -9,7 +9,7 @@ interface ApprovalTaskListProps {
 
 export function ApprovalTaskList({ tasks, onApproveTask, isLoading }: ApprovalTaskListProps) {
   const [processingTasks, setProcessingTasks] = useState<Set<string>>(new Set());
-  const [comments, setComments] = useState<Record<string, string>>({});
+
 
   const handleApproval = async (taskId: string, approved: boolean) => {
     setProcessingTasks(prev => new Set(prev).add(taskId));
@@ -18,14 +18,6 @@ export function ApprovalTaskList({ tasks, onApproveTask, isLoading }: ApprovalTa
       await onApproveTask({
         taskId,
         approved,
-        comments: comments[taskId] || undefined,
-      });
-
-      // Limpar comentários após processamento
-      setComments(prev => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { [taskId]: _, ...rest } = prev;
-        return rest;
       });
     } catch (error) {
       console.error('Erro ao processar aprovação:', error);
@@ -36,13 +28,6 @@ export function ApprovalTaskList({ tasks, onApproveTask, isLoading }: ApprovalTa
         return newSet;
       });
     }
-  };
-
-  const handleCommentChange = (taskId: string, comment: string) => {
-    setComments(prev => ({
-      ...prev,
-      [taskId]: comment,
-    }));
   };
 
   if (isLoading) {
@@ -78,7 +63,9 @@ export function ApprovalTaskList({ tasks, onApproveTask, isLoading }: ApprovalTa
               <div className="approval-task-header">
                 <h3>{task.title}</h3>
                 <div className="approval-task-meta">
-                  <span className="task-user">Por: {task.userEmail || task.userId}</span>
+                  <span className="task-user">
+                    Por: {task.userEmail}
+                  </span>
                   <span className="task-date">
                     Submetida em: {new Date(task.modifiedDate).toLocaleDateString('pt-BR')}
                   </span>
@@ -90,20 +77,6 @@ export function ApprovalTaskList({ tasks, onApproveTask, isLoading }: ApprovalTa
               </div>
 
               <div className="approval-task-actions">
-                <div className="approval-comments">
-                  <label htmlFor={`comments-${task.taskId}`}>
-                    Comentários (opcional):
-                  </label>
-                  <textarea
-                    id={`comments-${task.taskId}`}
-                    value={comments[task.taskId] || ''}
-                    onChange={(e) => handleCommentChange(task.taskId, e.target.value)}
-                    placeholder="Adicione comentários sobre a decisão..."
-                    disabled={isProcessing}
-                    rows={3}
-                  />
-                </div>
-
                 <div className="approval-buttons">
                   <button
                     onClick={() => handleApproval(task.taskId, false)}
