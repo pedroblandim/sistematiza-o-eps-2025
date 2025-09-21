@@ -105,6 +105,17 @@ npm run dev
 ```
 O frontend será iniciado na porta 5173.
 
+#### Usuários de Teste
+Com o profile de teste ativo, os seguintes usuários são criados automaticamente:
+
+**Administrador:**
+- Email: `admin@test.com`
+- Senha: `admin123`
+
+**Usuário comum:**
+- Email: `user@test.com`
+- Senha: `user123`
+
 ## Sistema
 ### Visualização do Usuário
 ### Visualização do Administrador
