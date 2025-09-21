@@ -8,27 +8,110 @@ O software deve ter 2 objetivos principais:
 1. Incentivar o compartilhamento de conhecimento (por meio de Gamificação)
 2. Centralizar todo conteúdo compartilhado
 
-### Requisitos Funcionais:
-#### Colaborador:
-- Ver tarefas criadas
-- Criar uma tarefa com título e conteúdo
-- Atualizar tarefa
-- Submeter tarefa para aprovação
-- Adicionar documentos na tarefa, como arquivos ou imagens (**PENDENTE**)
-- Visualizar os pontos recebidos das tarefas aprovadas (**PENDENTE**)
-- Trocar pontos por prêmios (**PENDENTE**)
+### Requisitos Funcionais
 
-#### Administrador
-- Ver tarefas submetidas, aprovadas ou rejeitadas
-- Aprovar ou rejeitar tarefa
-- Solicitar ajustes ao rejeitar tarefa (**PENDENTE**)
-- Criar tipos de tarefas (**PENDENTE**)
-- Criar prêmios (**PENDENTE**)
+**RF001 - Ver tarefas criadas**
+- **Prioridade:** Alta
+- **Descrição:** O usuário deve conseguir visualizar todas as tarefas que ele criou, independente do status
+- **Atores:** Usuário
+- **Fluxo de eventos:**
+  1. Usuário acessa o sistema
+  2. Sistema exibe lista de tarefas criadas pelo usuário
+  3. Usuário visualiza tarefas com seus respectivos status
 
-### Requisitos Não Funcionais:
-- Um usuário não pode deletar ou alterar conteúdos que não foram criados por ele
-- Um usuário não pode visualizar tarefas de outros usuários
-- Um usuário não pode editar uma tarefa que já foi submetida, aprovada ou rejeitada
+**RF002 - Criar tarefa**
+- **Prioridade:** Alta
+- **Descrição:** O usuário deve conseguir criar uma nova tarefa informando título e conteúdo
+- **Atores:** Usuário
+- **Fluxo de eventos:**
+  1. Usuário acessa formulário de criação de tarefa
+  2. Usuário preenche título e conteúdo
+  3. Usuário confirma criação
+  4. Sistema salva tarefa com status "Rascunho"
+
+**RF003 - Atualizar tarefa**
+- **Prioridade:** Alta
+- **Descrição:** O usuário deve conseguir editar título e conteúdo de tarefas em status "Rascunho"
+- **Atores:** Usuário
+- **Fluxo de eventos:**
+  1. Usuário seleciona tarefa em status "Rascunho"
+  2. Sistema exibe formulário preenchido
+  3. Usuário modifica campos desejados
+  4. Usuário confirma alterações
+  5. Sistema atualiza tarefa
+
+**RF004 - Submeter tarefa para aprovação**
+- **Prioridade:** Alta
+- **Descrição:** O usuário deve conseguir submeter tarefas finalizadas para avaliação do administrador
+- **Atores:** Usuário
+- **Fluxo de eventos:**
+  1. Usuário seleciona tarefa em status "Rascunho"
+  2. Usuário confirma submissão
+  3. Sistema altera status para "Aguardando Aprovação"
+  4. Tarefa fica disponível para administrador avaliar
+
+**RF005 - Gerenciar tarefas administrativas**
+- **Prioridade:** Alta
+- **Descrição:** O administrador deve conseguir visualizar todas as tarefas submetidas, aprovadas ou rejeitadas
+- **Atores:** Administrador
+- **Fluxo de eventos:**
+  1. Administrador acessa painel administrativo
+  2. Sistema exibe tarefas filtradas por status
+  3. Administrador visualiza detalhes das tarefas
+
+**RF006 - Aprovar ou rejeitar tarefa**
+- **Prioridade:** Alta
+- **Descrição:** O administrador deve conseguir aprovar ou rejeitar tarefas submetidas
+- **Atores:** Administrador
+- **Fluxo de eventos:**
+  1. Administrador visualiza tarefa submetida
+  2. Administrador avalia conteúdo
+  3. Administrador seleciona "Aprovar" ou "Rejeitar"
+  4. Sistema atualiza status da tarefa
+
+**RF007 - Adicionar documentos na tarefa** (**PENDENTE**)
+- **Prioridade:** Média
+- **Descrição:** O usuário deve conseguir anexar arquivos ou imagens às tarefas
+- **Atores:** Usuário
+- **Fluxo de eventos:** A ser definido
+
+**RF008 - Visualizar pontos recebidos** (**PENDENTE**)
+- **Prioridade:** Média
+- **Descrição:** O usuário deve conseguir visualizar os pontos obtidos com tarefas aprovadas
+- **Atores:** Usuário
+- **Fluxo de eventos:** A ser definido
+
+**RF009 - Trocar pontos por prêmios** (**PENDENTE**)
+- **Prioridade:** Baixa
+- **Descrição:** O usuário deve conseguir resgatar prêmios utilizando pontos acumulados
+- **Atores:** Usuário
+- **Fluxo de eventos:** A ser definido
+
+**RF010 - Solicitar ajustes** (**PENDENTE**)
+- **Prioridade:** Média
+- **Descrição:** O administrador deve conseguir solicitar ajustes específicos ao rejeitar uma tarefa
+- **Atores:** Administrador
+- **Fluxo de eventos:** A ser definido
+
+**RF011 - Criar tipos de tarefas** (**PENDENTE**)
+- **Prioridade:** Baixa
+- **Descrição:** O administrador deve conseguir criar e gerenciar diferentes tipos/categorias de tarefas
+- **Atores:** Administrador
+- **Fluxo de eventos:** A ser definido
+
+**RF012 - Criar prêmios** (**PENDENTE**)
+- **Prioridade:** Baixa
+- **Descrição:** O administrador deve conseguir criar e gerenciar prêmios disponíveis para resgate
+- **Atores:** Administrador
+- **Fluxo de eventos:** A ser definido
+
+### Requisitos Não Funcionais
+
+**NF001 - Controle de acesso e propriedade**
+- **Descrição:** Um usuário não pode deletar, alterar ou visualizar conteúdos que não foram criados por ele. Apenas administradores têm acesso completo ao sistema.
+
+**NF002 - Controle de estado de tarefas**
+- **Descrição:** Um usuário não pode editar uma tarefa que já foi submetida, aprovada ou rejeitada. Apenas tarefas em status "Rascunho" podem ser modificadas pelo criador.
 
 
 ## Diagrama UML
@@ -86,7 +169,7 @@ A estrutura é composta por:
 - **hooks customizados** (`useAuth`) que encapsulam lógicas específicas
 - **types** que definem as interfaces TypeScript
 
-O gerenciamento de estado utiliza `useState` e `useEffect` do React, sem bibliotecas externas adicionais. A autenticação é baseada em JWT, com tokens armazenados no localStorage e validação automática em cada requisição. A aplicação renderiza diferentes interfaces baseadas no tipo de usuário (colaborador ou administrador), mantendo a separação de responsabilidades de forma clara e simples.
+O gerenciamento de estado utiliza `useState` e `useEffect` do React, sem bibliotecas externas adicionais. A autenticação é baseada em JWT, com tokens armazenados no localStorage e validação automática em cada requisição. A aplicação renderiza diferentes interfaces baseadas no tipo de usuário (usuário ou administrador), mantendo a separação de responsabilidades de forma clara e simples.
 
 ### Como Executar o Projeto
 
@@ -115,6 +198,60 @@ Com o profile de teste ativo, os seguintes usuários são criados automaticament
 **Usuário comum:**
 - Email: `user@test.com`
 - Senha: `user123`
+
+## Como Testar o Sistema
+
+### Cenários de Teste - Usuário Usuário
+
+1. **Teste de Login e Visualização de Tarefas**
+   - Acesse o sistema com: `user@test.com` / `user123`
+   - Verifique se a interface do usuário é exibida corretamente
+   - Confirme que a lista de tarefas (inicialmente vazia) é mostrada
+
+2. **Teste de Criação de Tarefa**
+   - Preencha o formulário "Nova Tarefa" com título e conteúdo
+   - Clique em "Salvar"
+   - Verifique se a tarefa aparece na lista com status "RASCUNHO"
+
+3. **Teste de Edição de Tarefa**
+   - Clique em "Editar" em uma tarefa com status "RASCUNHO"
+   - Modifique título ou conteúdo
+   - Salve as alterações
+   - Confirme que as modificações foram aplicadas
+
+4. **Teste de Submissão para Aprovação**
+   - Em uma tarefa com status "RASCUNHO", clique em "Submeter para Aprovação"
+   - Confirme que o status mudou para "AGUARDANDO APROVAÇÃO"
+   - Verifique que a tarefa não pode mais ser editada
+
+5. **Teste de Restrições de Acesso**
+   - Verifique que não há opção de edição para tarefas aguardando aprovação
+   - Confirme que apenas suas próprias tarefas são exibidas
+
+### Cenários de Teste - Administrador
+
+1. **Teste de Login Administrativo**
+   - Acesse o sistema com: `admin@test.com` / `admin123`
+   - Confirme que há abas para "Pendentes" e "Processadas"
+
+2. **Teste de Aprovação de Tarefas**
+   - Na aba "Pendentes", clique em "Aprovar" e uma tarefa
+   - Verifique se a tarefa some da aba "Pendentes" e muda para a aba "Processadas" com o status "Aprovada"
+
+3. **Teste de Rejeição de Tarefas**
+   - Na aba "Pendentes", selecione uma tarefa submetida
+   - Clique em "Rejeitar"
+   - Confirme que a tarefa aparece na aba "Processadas" com status "REJEITADA"
+
+4. **Teste de Visualização de Tarefas Processadas**
+   - Acesse a aba "Processadas"
+   - Verifique que todas as tarefas aprovadas e rejeitadas são listadas
+   - Confirme que tarefas de diferentes usuários são exibidas
+
+### Casos de Teste de Erro
+
+- Tente fazer login com credenciais inválidas
+- Teste a responsividade em diferentes tamanhos de tela
 
 ## Sistema
 ### Login
