@@ -78,7 +78,7 @@ public class TaskController {
 
         TaskResponse response = createTaskResponse(task);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.ok().body(response);
     }
 
     @PostMapping("/submit")
