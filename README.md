@@ -8,8 +8,45 @@ O software deve ter 2 objetivos principais:
 1. Incentivar o compartilhamento de conhecimento (por meio de Gamificação)
 2. Centralizar todo conteúdo compartilhado
 
-Requisitos:
-- 
+### Requisitos Funcionais:
+#### Colaborador:
+- Ver tarefas criadas
+- Criar uma tarefa com título e conteúdo
+- Atualizar tarefa
+- Submeter tarefa para aprovação
+- Adicionar documentos na tarefa, como arquivos ou imagens (**PENDENTE**)
+- Visualizar os pontos recebidos das tarefas aprovadas (**PENDENTE**)
+- Trocar pontos por prêmios (**PENDENTE**)
+
+#### Administrador
+- Ver tarefas submetidas, aprovadas ou rejeitadas
+- Aprovar ou rejeitar tarefa
+- Solicitar ajustes ao rejeitar tarefa (**PENDENTE**)
+- Criar tipos de tarefas (**PENDENTE**)
+- Criar prêmios (**PENDENTE**)
+
+### Requisitos Não Funcionais:
+- Um usuário não pode deletar ou alterar conteúdos que não foram criados por ele
+- Um usuário não pode visualizar tarefas de outros usuários
+- Um usuário não pode editar uma tarefa que já foi submetida, aprovada ou rejeitada
 
 
 ## Diagrama UML
+### Diagrama de Caso de Uso
+### Diagrama de Classes
+
+## Documentação (Criar um relatório explicando o desenvolvimento e os desafios)
+Esse projeto foi implementado seguindo, principalmente, uma arquitetura baseada no conceito de Clean Architecture. Além disso, a arquitetura adotou o padrão de camadas, na qual divide o backend do frontend, com uma comunicação entre os dois realizada por requisições assíncronas (AJAX), sendo esse uma abordagem bem comum no mercado.
+
+Esse projeto ainda se encontra em um estado de protótipo, ou seja, ainda está distante de ser um código disponível para ir para um ambiente de produção. 
+
+Seguir os princípios do Clean Arch possibilitou postergar escolhar e implementações referentes a infraestrutura do projeto, de maneira que eu conseguisse priorizar as regras de negócio. Um grande exemplo disso foi o fato de que todas as regras relacionadas ao gerenciamento de tarefas já estão implementadas, porém, não foi implementado nenhum código referente a banco de dados (relacional ou não relacional). O código foi implementado de maneira que a camada de *Repository* ficasse independente de como esse dado será persistido, possibilitando que eu criase uma implementação simplificada que persiste os dados na memória *InMemoryTaskRepository*. Em algum momento, na evolução desse projeto, será necessário implementar uma camada de persistência mais robusto, com um banco de dados. 
+
+Outras questões relacionadas a infraestrutura também foram postergadas, muitas delas relacionadas à segurança, que não faz sentido priorizar em uma fase inicial como esta.
+
+### Desafios
+Um dos maiores desafios, certamente, foi definir a arquitetura do backend. A definição dos módulos e da estrutura de arquivos, por exemplo, influencia muito nesses quesitos. 
+
+Outro desafio que encontrei, também nesse sentido, foi o de criar minha camada de domínio de maneira que fosse independente do framework web escolhido, nesse caso, o Spring, pelo fato deste ser um framework que, por padrão, funciona de uma maneira que o código dele deve estar constantemente ligado aos códigos do domínio da aplicação.
+
+### Documentação
