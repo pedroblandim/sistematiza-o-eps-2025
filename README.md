@@ -63,9 +63,7 @@ Outro desafio enfrentado foi a tentativa de implementar *Test-Driven Development
 #### Ferramenta de CLI para Testes
 Durante o desenvolvimento, foi implementada uma classe `TaskCommands` para facilitar o teste dos Use Cases de tarefas através de comandos CLI, permitindo validar a lógica de negócio sem necessidade de interface gráfica. Porém, após a criação dos controllers REST e a integração com o frontend, essa classe deixou de ser mantida e atualizada, o que fez com que ela ficasse deprecada e teve que ser comentada para evitar erros na inicialização do Spring. Um trabalho futuro importante é refatorar essa classe para que volte a ser uma ferramenta útil de teste dos Use Cases, independente das controllers HTTP.
 
-### Documentação
-
-#### Backend
+### Backend
 O backend foi a camada mais complexa do sistema e que demandou maior reflexão e elaboração, principalmente devido à aplicação dos princípios de Clean Architecture e à necessidade de manter as camadas desacopladas do framework Spring.
 
 A arquitetura segue uma organização em módulos funcionais (`tasks`, `users`, `auth`, `shared`), cada um estruturado em três camadas principais:
@@ -78,7 +76,7 @@ A arquitetura segue uma organização em módulos funcionais (`tasks`, `users`, 
 
 A comunicação entre as camadas segue o fluxo: `Infrastructure → Application → Domain`, onde os controladores recebem requisições HTTP, delegam para os Use Cases apropriados, que por sua vez utilizam as entidades de domínio e repositórios para executar as operações. O Spring gerencia a injeção de dependências através das classes de configuração, mantendo o desacoplamento entre as camadas.
 
-#### Frontend
+### Frontend
 O frontend utiliza React com TypeScript e segue uma arquitetura mais simples e direta, organizada em componentes funcionais que consomem a API REST do backend.
 
 A estrutura é composta por: 
@@ -89,3 +87,24 @@ A estrutura é composta por:
 - **types** que definem as interfaces TypeScript
 
 O gerenciamento de estado utiliza `useState` e `useEffect` do React, sem bibliotecas externas adicionais. A autenticação é baseada em JWT, com tokens armazenados no localStorage e validação automática em cada requisição. A aplicação renderiza diferentes interfaces baseadas no tipo de usuário (colaborador ou administrador), mantendo a separação de responsabilidades de forma clara e simples.
+
+### Como Executar o Projeto
+
+#### Backend
+Navegue até o diretório `backend` e execute:
+```bash
+./gradlew bootRun --args='--spring.profiles.active=test'
+```
+O servidor será iniciado na porta 8080 com o profile de teste.
+
+#### Frontend
+Navegue até o diretório `frontend` e execute:
+```bash
+npm install
+npm run dev
+```
+O frontend será iniciado na porta 5173.
+
+## Sistema
+### Visualização do Usuário
+### Visualização do Administrador
