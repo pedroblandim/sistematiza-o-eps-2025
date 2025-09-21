@@ -33,7 +33,10 @@ O software deve ter 2 objetivos principais:
 
 ## Diagrama UML
 ### Diagrama de Caso de Uso
+<img width="483" height="481" alt="Casos de uso drawio" src="https://github.com/user-attachments/assets/dd2d07dc-da1e-49cc-a7c4-dd155e1b32f3" />
+
 ### Diagrama de Classes
+<img width="650" height="376" alt="Classes drawio" src="https://github.com/user-attachments/assets/24fcb8da-7c6c-4f86-8e2b-62ac6450e912" />
 
 ## Documentação (Criar um relatório explicando o desenvolvimento e os desafios)
 Esse projeto foi implementado seguindo, principalmente, uma arquitetura baseada no conceito de Clean Architecture. Além disso, a arquitetura adotou o padrão de camadas, na qual divide o backend do frontend, com uma comunicação entre os dois realizada por requisições assíncronas (AJAX), sendo esse uma abordagem bem comum no mercado.
