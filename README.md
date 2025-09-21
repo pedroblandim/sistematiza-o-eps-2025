@@ -117,5 +117,11 @@ Com o profile de teste ativo, os seguintes usuários são criados automaticament
 - Senha: `user123`
 
 ## Sistema
+### Login
+<img width="1920" height="962" alt="image" src="https://github.com/user-attachments/assets/e6213bef-6297-4dca-ae5e-0038d14788a0" />
+
 ### Visualização do Usuário
+<img width="1919" height="961" alt="image" src="https://github.com/user-attachments/assets/eca13f6c-bfdf-4ae4-92df-688eec2291a7" />
+
 ### Visualização do Administrador
+<img width="1920" height="962" alt="image" src="https://github.com/user-attachments/assets/e97b4de7-22ea-4078-814b-32461120ee75" />
